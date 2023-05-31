@@ -1,0 +1,30 @@
+package database
+
+import (
+	"fmt"
+	"os"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
+var DB *gorm.DB
+
+func Connect() {
+	var err error
+	host := os.Getenv("DB_HOST")
+	username := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+	port := os.Getenv("DB_PORT")
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=America/Phoenix", host, username, password, dbName, port)
+	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	DB = DB.Set("gorm:auto_preload", true)
+
+	if err != nil {
+		panic(err)
+	} else {
+		fmt.Println("Successfully connected to the database")
+	}
+}
